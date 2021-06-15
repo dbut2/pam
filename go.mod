@@ -1,4 +1,4 @@
-module github.com/dbut2/go-pam
+module github.com/dbut2/pam
 
 go 1.16
 
