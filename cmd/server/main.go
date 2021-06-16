@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/dbut2/go-pam/internal/server"
 	"os"
+
+	"github.com/dbut2/pam/internal/server"
 )
 
 func main() {
