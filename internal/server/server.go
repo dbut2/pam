@@ -14,6 +14,11 @@ func Run(address string) error {
 		api.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, "pong")
 		})
+
+		api.GET("/test", func(c *gin.Context) {
+
+
+		})
 	}
 
 	root := r.Group("")
