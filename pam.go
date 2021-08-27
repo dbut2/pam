@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/dbut2/pam/internal/docs"
-	"github.com/dbut2/pam/pkg/cli"
 	"log"
 	"os"
+
+	"github.com/dbut2/pam/pkg/cli"
 )
 
 func main() {
@@ -13,6 +13,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("error: %s\n", err.Error())
 	}
-
-	docs.Gen()
 }
