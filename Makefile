@@ -1,7 +1,6 @@
-.PHONY: vendor
-vendor:
-	go mod tidy
-	go mod vendor
+cli:
+	rm -f pam
+	go build -o pam cmd/cli/main.go
 
 server:
 	rm -f server
