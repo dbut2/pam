@@ -1,45 +1,88 @@
 package server
 
 import (
-	"html/template"
 	"net/http"
+	"time"
 
-	"github.com/dbut2/pam/templates"
+	"github.com/dbut2/pam/internal/app"
+	"github.com/dbut2/pam/internal/server/pages"
+	"github.com/dbut2/pam/internal/server/templates"
 	"github.com/gin-gonic/gin"
 )
 
-func Run(address string) error {
+type Server struct {
+	config Config
+}
 
-	r := gin.Default()
-
-	api := r.Group("/api")
-	{
-		api.GET("/user/{user}", func(c *gin.Context) {
-			c.JSON(http.StatusOK, "pong")
-		})
-
-		api.GET("/:user", func(c *gin.Context) {
-			code := c.Param("code")
-			s := a.Lengthen(code)
-			c.Redirect(http.StatusTemporaryRedirect, s.Url)
-		})
+func NewServer(config Config) *Server {
+	return &Server{
+		config: config,
 	}
+}
 
-	root := r.Group("")
-	{
-		r.GET("index", func(c *gin.Context) {
-			t, err := template.New("index").Parse(templates.Index)
-			_, _ = t, err
-		})
-
-		root.GET("/cal", func(c *gin.Context) {
-
-		})
-
-		root.GET("/ping", func(c *gin.Context) {
-			c.String(http.StatusOK, "Pong!")
-		})
+func (s *Server) Serve(a app.App) error {
+	r := gin.New()
+	t, err := templates.GetTemplate()
+	if err != nil {
+		return err
 	}
+	r.SetHTMLTemplate(t)
 
-	return r.Run(address)
+	api(r.Group("/api"), a)
+	entry(r.Group("/entry"), a)
+
+	r.GET("/", func(c *gin.Context) {
+		c.Writer.WriteHeader(http.StatusOK)
+		c.Writer.Write([]byte(pages.Site))
+	})
+
+	r.GET("/login", func(c *gin.Context) {
+		c.Redirect(http.StatusTemporaryRedirect, a.Authenticator().GetLoginURL())
+	})
+
+	r.GET("/auth", func(c *gin.Context) {
+		code := c.Query("code")
+		ts := a.Authenticator().Exchange(c, code)
+
+		gid := a.Authenticator().GetGID(c, ts)
+
+		cookie := &http.Cookie{
+			Name:     "GID",
+			Value:    gid,
+			MaxAge:   int((time.Hour * 24 * 365).Seconds()),
+			Secure:   true,
+			HttpOnly: true,
+		}
+
+		http.SetCookie(c.Writer, cookie)
+
+		c.Redirect(http.StatusTemporaryRedirect, "")
+	})
+
+	r.GET("/logout", func(c *gin.Context) {
+		cookie := &http.Cookie{
+			Name:     "GID",
+			MaxAge:   -1,
+			Secure:   true,
+			HttpOnly: true,
+		}
+
+		http.SetCookie(c.Writer, cookie)
+
+		c.Redirect(http.StatusTemporaryRedirect, "")
+	})
+
+	return r.Run(s.config.Address)
+}
+
+func Serve(config Config, a app.App) error {
+	return NewServer(config).Serve(a)
+}
+
+func Authenticator(c *gin.Context) string {
+	gid, err := c.Cookie("GID")
+	if err != nil {
+		c.Redirect(http.StatusTemporaryRedirect, "/login")
+	}
+	return gid
 }

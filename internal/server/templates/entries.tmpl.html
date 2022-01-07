@@ -1,0 +1,20 @@
+{{define "entries"}}
+
+<html lang="en">
+<head>
+    <title>
+        Pam
+    </title>
+</head>
+<body>
+<ol>
+{{range .entries}}
+    <li>
+        {{.Date}}{{.Entry}}
+    </li>
+{{end}}
+</ol>
+</body>
+</html>
+
+{{end}}
