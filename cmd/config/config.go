@@ -43,13 +43,13 @@ func findConfig() Config {
 		}
 	}
 
-	_, err = os.Stat("/secrets/config.yaml")
+	_, err = os.Stat("/secret-config/config.yaml")
 	if !os.IsNotExist(err) {
 		if err != nil {
 			panic(err.Error())
 		}
 
-		bytes, err := os.ReadFile("/secrets/config.yaml")
+		bytes, err := os.ReadFile("/secret-config/config.yaml")
 		if err != nil {
 			panic(err.Error())
 		}
@@ -78,13 +78,13 @@ func findCreds() ([]byte, bool) {
 		return bytes, true
 	}
 
-	_, err = os.Stat("/secrets/creds.json")
+	_, err = os.Stat("/secret-creds/creds.json")
 	if !os.IsNotExist(err) {
 		if err != nil {
 			panic(err.Error())
 		}
 
-		bytes, err := os.ReadFile("/secrets/creds.json")
+		bytes, err := os.ReadFile("/secret-creds/creds.json")
 		if err != nil {
 			panic(err.Error())
 		}

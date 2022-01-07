@@ -20,6 +20,6 @@ deploy: update
 	--image=gcr.io/dbut-0/pam \
 	--allow-unauthenticated \
 	--max-instances=4 \
-	--set-secrets=/secrets/config.yaml=pam-config:latest,/secrets/creds.json=pam-creds:latest \
+	--set-secrets=/secret-config/config.yaml=pam-config:latest,/secret-creds/creds.json=pam-creds:latest \
 	--region=us-west1 \
 	--project=dbut-0
