@@ -16,7 +16,7 @@ type Auth struct {
 func NewAuth(config Config) *Auth {
 	a := &Auth{}
 
-	c, err := google.ConfigFromJSON(config.creds, "https://www.googleapis.com/auth/userinfo.email")
+	c, err := google.ConfigFromJSON(config.Creds, "https://www.googleapis.com/auth/userinfo.email")
 	if err != nil {
 		panic(err.Error())
 	}

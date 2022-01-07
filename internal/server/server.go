@@ -21,7 +21,12 @@ func NewServer(config Config) *Server {
 }
 
 func (s *Server) Serve(a app.App) error {
+	if s.config.Prod {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.New()
+
 	t, err := templates.GetTemplate()
 	if err != nil {
 		return err
@@ -33,7 +38,10 @@ func (s *Server) Serve(a app.App) error {
 
 	r.GET("/", func(c *gin.Context) {
 		c.Writer.WriteHeader(http.StatusOK)
-		c.Writer.Write([]byte(pages.Site))
+		_, err = c.Writer.Write([]byte(pages.Site))
+		if err != nil {
+			panic(err.Error())
+		}
 	})
 
 	r.GET("/login", func(c *gin.Context) {
