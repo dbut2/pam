@@ -38,7 +38,10 @@ func (s *Server) Serve(a app.App) error {
 
 	r.GET("/", func(c *gin.Context) {
 		c.Writer.WriteHeader(http.StatusOK)
-		c.Writer.Write([]byte(pages.Site))
+		_, err = c.Writer.Write([]byte(pages.Site))
+		if err != nil {
+			panic(err.Error())
+		}
 	})
 
 	r.GET("/login", func(c *gin.Context) {
