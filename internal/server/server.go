@@ -21,7 +21,12 @@ func NewServer(config Config) *Server {
 }
 
 func (s *Server) Serve(a app.App) error {
+	if s.config.Prod {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.New()
+
 	t, err := templates.GetTemplate()
 	if err != nil {
 		return err
